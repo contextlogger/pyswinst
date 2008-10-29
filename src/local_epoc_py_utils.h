@@ -1,5 +1,3 @@
-// -*- symbian-c++ -*-
-
 //
 // localepocpyutils.h
 //
