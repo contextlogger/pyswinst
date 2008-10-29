@@ -1,0 +1,37 @@
+targettype 	dll
+TARGET	       	<%= $pyd.bin_basename %>.pyd
+
+<% unless build.v9? %>
+TARGETPATH      \system\libs\
+<% end %>
+
+UID             <%= build.uid2.chex_string %> <%= build.uid3.chex_string %>
+
+NOSTRICTDEF
+EXPORTUNFROZEN
+
+SYSTEMINCLUDE 	\epoc32\include
+SYSTEMINCLUDE 	\epoc32\include\libc
+SYSTEMINCLUDE 	\epoc32\include\python
+
+LIBRARY 	python222.lib
+LIBRARY 	euser.lib
+LIBRARY		efsrv.lib
+library bafl.lib 
+library swinstcli.lib // an SDK add-on
+
+<% if build.trait_map[:do_logging] %>
+LIBRARY         flogger.lib
+<% end %>
+
+USERINCLUDE 	.
+USERINCLUDE 	..\..\src
+
+SOURCEPATH 	..\..\src
+source		module.cpp
+source		local_epoc_py_utils.cpp
+
+<% if build.v9? %>
+// We apparently require NetworkServices and TrustedUI, but better use all DevCert caps to allow processes with higher caps to load the library.
+CAPABILITY 	<%= build.caps_string %>
+<% end %>
