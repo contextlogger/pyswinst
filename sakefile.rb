@@ -170,10 +170,52 @@ task :all => [:makefiles, :bin, :sis]
 
 $doc_build = $builds.last
 
+if $doc_build
+  # C++ API documentation.
+  Sake::Tasks::def_doxygen_tasks(:build => $doc_build)
+  task :all => :cxxdoc
+end
+
 # Configure any rules related to releasing and uploading and such
 # things. Probably at least involves copying or uploading the
 # distribution files somewhere.
 try_load('local/releasing.rb')
+
+desc "Prepares web pages."
+task :web do
+  srcfiles = Dir['web/*.txt2tags.txt']
+  sh("darcs changes > web/changelog.txt")
+  for srcfile in srcfiles
+    htmlfile = srcfile.sub(/\.txt2tags\.txt$/, ".html")
+    sh("tools/txt2tags --target xhtml --infile %s --outfile %s --encoding utf-8 --verbose" % [srcfile, htmlfile])
+  end
+end
+
+dl_dir = $proj.download_dir
+dl_path = $proj.to_proj_rel(dl_dir).to_s
+
+desc "Prepares downloads for the current version."
+task :release => :web do
+  mkdir_p dl_path
+
+  for build in $builds
+    ## Unsigned.
+    if (not build.sign_sis?) or (build.sign_sis? and ($cert_name == "dev"))
+      src_sis_file = build.to_proj_rel(build.long_sis_file).to_s
+      sis_basename = File.basename(src_sis_file)
+      download_file = File.join(dl_path, sis_basename)
+      ln(src_sis_file, download_file, :force => true)
+    end
+
+    ## Signed.
+    if build.sign_sis? and ($cert_name == "self")
+      src_sis_file = build.to_proj_rel(build.long_sisx_file).to_s
+      sis_basename = File.basename(src_sis_file)
+      download_file = File.join(dl_path, sis_basename)
+      ln(src_sis_file, download_file, :force => true)
+    end
+  end
+end
 
 Sake::Tasks::force_uncurrent_on_op_change
 

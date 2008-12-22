@@ -32,6 +32,6 @@ source		module.cpp
 source		local_epoc_py_utils.cpp
 
 <% if build.v9? %>
-// We apparently require NetworkServices and TrustedUI, but better use all DevCert caps to allow processes with higher caps to load the library.
+// We apparently require TrustedUI, but better use all DevCert caps to allow processes with higher caps to load the library.
 CAPABILITY 	<%= build.caps_string %>
 <% end %>

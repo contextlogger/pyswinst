@@ -1,0 +1,45 @@
+pyswinst for Python for S60
+
+%%mtime(%c)
+
+%!includeconf: config.t2t
+%! Options : --toc --enum-title
+
+h1. Introduction
+
+The ``pyswinst`` [Python for S60 http://www.forum.nokia.com/python] extension supports programmatic, non-interactive software installation. Both SIS files and JAR files should be installable, but we have only tried SIS file installation.
+
+The present version uses a fixed set of installation options, of which particularly noteworthy are that installation is always to the ``E:`` drive (tough luck if the drive does not exist), and that upgrades (i.e., replacing software that is already installed) are allowed.
+
+h1. Status
+
+Stable.
+
+h1. Examples
+
+The [programs used to test ``pyswinst`` ../test-programs] also serve as example programs. There is no API documentation available for ``pyswinst``. The API is rather simple, though, and the examples should be sufficient to cover it.
+
+Note that ``auto_installer.py`` depends on the ``fnmatch.py`` and ``miso`` libraries, neither of which are included in Nokia's Python for S60 distributions. ``fnmatch.py`` can be acquired from other, compatible Python distributions, and Miso downloads are available from the [Miso homepage http://www.hiit.fi/files/fi/da/miso/utils/web/].
+
+h1. License
+
+For the license under which the software is released, see the [license.txt ../doc/license.txt] file.
+
+h1. Download
+
+A [collection of release builds ../download/] is available. The ``self`` variant is self-signed, with maximum self-signable capabilities. The ``dev`` variant is signable with Symbian's Open Signed Online or with a developer certificate, and has maximum capabilities allowed by Open Signed Online. Note that in this case the self-signed version is rather pointless, as the TrustedUI capability is required for "silent" software installation.
+
+You may or may not find the [changelog.txt changelog.txt] file useful in trying to determine what has changed between releases.
+
+A [darcs http://darcs.net/] repository of the [source code ..] (with change history) is also available, and can be retrieved with the ``get`` command of ``darcs``.
+
+h1. Dependencies
+
+The software runs on some S60 3rd Edition devices, but we do not know on which ones exactly. The software accesses the [SW Installer Launcher http://wiki.forum.nokia.com/index.php/SW_Installer_Launcher_API] ABI, and there are apparently no guarantees as to the binary compatibility for that ABI, neither "neither between platform versions or within a platform version".
+
+h1. Contributing
+
+Contributions are welcome. Send patches to the below email address. The ``send`` command of ``darcs`` may be used.
+
+------------------------------------------------
+Tero Hasu /// tero.hasu@hut.fi
