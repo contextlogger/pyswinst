@@ -26,6 +26,7 @@
 # SOFTWARE.
 
 import appuifw
+import audio
 import e32
 import os
 import fnmatch # not built-in
@@ -177,6 +178,10 @@ class GUI:
     def _inst_event(self, ev_type, **kw):
         if ev_type == "fatal_error":
             self.abort()
+        elif ev_type == "inst_ok":
+            audio.say("ok")
+        elif ev_type == "inst_fail":
+            audio.say("failure")
 
     def start(self):
         self.installer.start()
