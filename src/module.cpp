@@ -228,7 +228,8 @@ static PyObject *_fn__pyswinst__SwInst__install(_or__pyswinst__SwInst *aPyObj, P
   opts.iOCSP = SwiUI::EPolicyNotAllowed;
   opts.iDrive = 'E';
   opts.iUntrusted = SwiUI::EPolicyAllowed; 
-  opts.iCapabilities = SwiUI::EPolicyNotAllowed; 
+  // "Automatically grant user capabilities." Do not know what this means, but it seems to be required for installing self-signed SIS files.
+  opts.iCapabilities = SwiUI::EPolicyAllowed; // SwiUI::EPolicyNotAllowed; 
   opts.iKillApp = SwiUI::EPolicyAllowed; 
   opts.iUpgradeData = SwiUI::EPolicyNotAllowed; 
   opts.iOverwrite = SwiUI::EPolicyAllowed; 
@@ -241,6 +242,7 @@ static PyObject *_fn__pyswinst__SwInst__install(_or__pyswinst__SwInst *aPyObj, P
   TInt error;
   TRAP(error, (aPyObj->iCxxObjPtr->InstallL(cb, fileName, optsPckg)););
   if (error) {
+    // look at swinstdefs.h for API-specific error list
     return SPyErr_SetFromSymbianOSErr(error);
   }
   RETURN_NO_VALUE;
