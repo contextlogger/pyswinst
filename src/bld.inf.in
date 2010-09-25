@@ -1,4 +1,5 @@
 PRJ_PLATFORMS 
+winscw gcce
 
 PRJ_MMPFILES 
 <%= $pyd.basename %>.mmp 
