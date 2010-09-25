@@ -17,7 +17,7 @@ $basename = "pyswinst"
 
 $proj = Sake::Project.new(:basename => $basename,
                           :name => "SW Inst API for PyS60",
-                          :version => [1, 1],
+                          :version => [1, 2],
                           # This is a test UID.
                           :uid => Sake::Uid.v8($uid_v8),
                           :vendor => "HIIT")
