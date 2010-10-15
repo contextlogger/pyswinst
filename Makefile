@@ -8,7 +8,7 @@ release :
 	sake all release kits=s60_30 cert=self
 	sake all release kits=s60_30 cert=dev
 
-upload_dry :
+upload-dry :
 	sake upload dry=true
 
 upload :
