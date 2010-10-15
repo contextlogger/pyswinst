@@ -27,7 +27,7 @@ For the license under which the software is released, see the [license.txt ../do
 
 h1. Download
 
-A [collection of release builds ../download/] is available. The ``self`` variant is self-signed, with maximum self-signable capabilities. The ``dev`` variant is signable with Symbian's Open Signed Online or with a developer certificate, and has maximum capabilities allowed by Open Signed Online. Note that in this case the self-signed version is rather pointless, as the TrustedUI capability is required for "silent" software installation.
+A [collection of release builds ../download/] is available. The builds are for PyS60 1.4.5, not for the 1.9.x/2.0.0 series. The ``self`` variant is self-signed, with maximum self-signable capabilities. The ``dev`` variant is signable with Symbian's Open Signed Online or with a developer certificate, and has maximum capabilities allowed by Open Signed Online. Note that in this case the self-signed version is rather pointless, as the TrustedUI capability is required for "silent" software installation.
 
 You may or may not find the [changelog.txt changelog.txt] file useful in trying to determine what has changed between releases.
 
@@ -42,4 +42,8 @@ h1. Contributing
 Contributions are welcome. Send patches to the below email address. The ``send`` command of ``darcs`` may be used.
 
 ------------------------------------------------
-Tero Hasu /// tero.hasu@hut.fi
+_signature_
+
+% Local Variables:
+% mode: longlines
+% End:
