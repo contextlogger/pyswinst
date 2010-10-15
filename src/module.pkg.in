@@ -42,6 +42,7 @@
 [0x20001858], 0, 0, 0, {"Nokia E61"}
 [0x2000249b], 0, 0, 0, {"Nokia E71"}
 [0x2000060B], 0, 0, 0, {"Nokia N95"}
+[0x2000DA56], 0, 0, 0, {"Nokia 5800 XM"}
 
 <% dllname = $exeb[build].bin_basename %>
 
