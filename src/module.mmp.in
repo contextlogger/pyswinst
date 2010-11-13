@@ -1,7 +1,8 @@
 targettype 	dll
-TARGET	       	<%= $pyd.bin_basename %>.pyd
 
-<% unless build.v9? %>
+target	       	<%= build.binary_file.basename.to_s %>
+
+<% if build.v8_down? %>
 TARGETPATH      \system\libs\
 <% end %>
 
@@ -11,10 +12,17 @@ NOSTRICTDEF
 EXPORTUNFROZEN
 
 SYSTEMINCLUDE 	\epoc32\include
-SYSTEMINCLUDE 	\epoc32\include\libc
-SYSTEMINCLUDE 	\epoc32\include\python
 
-LIBRARY 	python222.lib
+<% case $pys60_version when 1 %>
+SYSTEMINCLUDE 	\epoc32\include\libc
+systeminclude 	\epoc32\include\python
+library 	python222.lib
+<% when 2 %>
+SYSTEMINCLUDE 	\epoc32\include\stdapis
+systeminclude 	\epoc32\include\python25
+library 	python25.lib
+<% else raise end %>
+
 LIBRARY 	euser.lib
 LIBRARY		efsrv.lib
 library bafl.lib 
@@ -31,7 +39,7 @@ SOURCEPATH 	..\..\src
 source		module.cpp
 source		local_epoc_py_utils.cpp
 
-<% if build.v9? %>
+<% if build.v9_up? %>
 // We apparently require TrustedUI, but better use all DevCert caps to allow processes with higher caps to load the library.
 CAPABILITY 	<%= build.caps_string %>
 <% end %>

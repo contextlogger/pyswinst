@@ -25,6 +25,14 @@
 // CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+/*
+  The source code for the Symbian^3 implementation of the API.
+  http://developer.symbian.org/xref/oss/xref/Symbian3/sf/mw/appinstall/appinstaller/AppinstUi/Server/Src/SWInstSession.cpp
+
+  Discussion on the new Symbian^3 capability requirements.
+  http://developer.symbian.org/forum/showthread.php?t=7428
+ */
+
 #include <e32std.h>
 #include <swinstapi.h>
 
@@ -116,14 +124,14 @@ CSwInstAo::~CSwInstAo()
 void CSwInstAo::RunL()
 {
   TInt error = iStatus.Int();
-  PyEval_RestoreThread(PYTHON_TLS->thread_state);
+  GIL_ENSURE;
   PyObject *callarg = Py_BuildValue("(i)", error);
   if (callarg) {
     PyObject *result = PyObject_CallObject(iCallback, callarg);
     Py_DECREF(callarg);
     Py_XDECREF(result);
   }
-  PyEval_SaveThread();
+  GIL_RELEASE;
 }
 
 void CSwInstAo::DoCancel()
@@ -183,7 +191,7 @@ static void del_SwInst(_or__pyswinst__SwInst *aPyObj);
 
 static PyObject *getattr_SwInst(PyObject *aPyObj, char *aName);
 
-static PyTypeObject const tmpl_SwInst = {PyObject_HEAD_INIT(NULL) 0, "pyswinst.SwInst", sizeof(_or__pyswinst__SwInst), 0, reinterpret_cast<destructor>(del_SwInst), 0, reinterpret_cast<getattrfunc>(getattr_SwInst), 0, 0, 0, 0, 0, 0, 0};
+static PyTypeObject const tmpl_SwInst = {PyObject_HEAD_INIT(NULL) 0, __MODULE_NAME__ ".SwInst", sizeof(_or__pyswinst__SwInst), 0, reinterpret_cast<destructor>(del_SwInst), 0, reinterpret_cast<getattrfunc>(getattr_SwInst), 0, 0, 0, 0, 0, 0, 0};
 
 static TInt def_SwInst();
 
@@ -194,7 +202,7 @@ static PyMethodDef const _mt__pyswinst__SwInst[] = {{"install", reinterpret_cast
 
 static PyObject *_ctor__pyswinst__SwInst(PyObject *aPyMod, PyObject *aPyArgs)
 {
-  PyTypeObject *typeObject = reinterpret_cast<PyTypeObject *>(SPyGetGlobalString(tmpl_SwInst.tp_name));
+  PyTypeObject *typeObject = reinterpret_cast<PyTypeObject *>(SPyGetGlobalString(__MODULE_NAME__ ".SwInst"));
   _or__pyswinst__SwInst *pyObj = PyObject_New(_or__pyswinst__SwInst, typeObject);
   if ((pyObj == NULL)) {
     return NULL;
@@ -231,10 +239,11 @@ static PyObject *_fn__pyswinst__SwInst__install(_or__pyswinst__SwInst *aPyObj, P
   // "Automatically grant user capabilities." Do not know what this means, but it seems to be required for installing self-signed SIS files.
   opts.iCapabilities = SwiUI::EPolicyAllowed; // SwiUI::EPolicyNotAllowed; 
   opts.iKillApp = SwiUI::EPolicyAllowed; 
-  opts.iUpgradeData = SwiUI::EPolicyNotAllowed; 
+  //opts.iUpgradeData = SwiUI::EPolicyNotAllowed; 
   opts.iOverwrite = SwiUI::EPolicyAllowed; 
   opts.iDownload = SwiUI::EPolicyNotAllowed; 
   opts.iPackageInfo = SwiUI::EPolicyAllowed; 
+  //opts.iBreakDependency = SwiUI::EPolicyAllowed; // applies to uninstall only
 
   SwiUI::TInstallOptionsPckg optsPckg;
   optsPckg = opts;
@@ -243,6 +252,8 @@ static PyObject *_fn__pyswinst__SwInst__install(_or__pyswinst__SwInst *aPyObj, P
   TRAP(error, (aPyObj->iCxxObjPtr->InstallL(cb, fileName, optsPckg)););
   if (error) {
     // look at swinstdefs.h for API-specific error list
+    // look at e32err.h for system-wide error list
+    // notably, -46 is KErrPermissionDenied
     return SPyErr_SetFromSymbianOSErr(error);
   }
   RETURN_NO_VALUE;
@@ -276,7 +287,7 @@ static PyObject *getattr_SwInst(PyObject *aPyObj, char *aName)
 
 static TInt def_SwInst()
 {
-  return ConstructType((&tmpl_SwInst), tmpl_SwInst.tp_name);
+  return ConstructType((&tmpl_SwInst), __MODULE_NAME__ ".SwInst");
 }
 
 // -------------------------------------------------------
@@ -284,9 +295,9 @@ static TInt def_SwInst()
 
 static PyMethodDef const _ft__pyswinst[] = {{"SwInst", reinterpret_cast<PyCFunction>(_ctor__pyswinst__SwInst), METH_NOARGS, NULL}, {NULL}};
 
-EXPORT_C void initpyswinst()
+EXPORT_PYD_ENTRY(__INIT_FUNC_NAME__)
 {
-  PyObject *pyMod = Py_InitModule("pyswinst", const_cast<PyMethodDef *>((&_ft__pyswinst[0])));
+  PyObject *pyMod = Py_InitModule(__MODULE_NAME__, const_cast<PyMethodDef *>((&_ft__pyswinst[0])));
   if ((pyMod == NULL)) {
     return;
   }

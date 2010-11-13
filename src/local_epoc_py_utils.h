@@ -1,3 +1,5 @@
+// -*- symbian-c++ -*-
+
 //
 // localepocpyutils.h
 //
@@ -37,6 +39,8 @@
 #include <Python.h>
 #include <symbian_python_ext_util.h>
 
+#include "sconfig.hrh"
+
 #define RETURN_NO_VALUE \
 Py_INCREF(Py_None); \
 return Py_None;
@@ -65,6 +69,18 @@ TInt ConstructType(const PyTypeObject* aTypeTemplate,
 #endif
 #ifndef NONSHARABLE_STRUCT
 #define NONSHARABLE_STRUCT(x) struct x
+#endif
+
+#if __PYS60_VERSION__ == 1
+#define GIL_ENSURE PyEval_RestoreThread(PYTHON_TLS->thread_state)
+#define GIL_RELEASE PyEval_SaveThread()
+#define EXPORT_PYD_ENTRY(_name) DL_EXPORT(void) _name()
+#elif __PYS60_VERSION__ == 2
+#define GIL_ENSURE PyGILState_STATE _gilstate = PyGILState_Ensure()
+#define GIL_RELEASE PyGILState_Release(_gilstate)
+#define EXPORT_PYD_ENTRY(_name) PyMODINIT_FUNC _name()
+#else
+#error Unknown PyS60 version.
 #endif
 
 #endif // __LOCALEPOCPYUTILS_H__

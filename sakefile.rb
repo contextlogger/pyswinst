@@ -1,10 +1,7 @@
 # -*- ruby -*-
-# sake variant sake3
+# sake variant sake4
 
-# The build tool driving this makefile is a custom one. The required
-# version has not yet been released.
-
-require 'sake3/component'
+require 'sake4/component'
 
 def try_load file
   begin
@@ -12,12 +9,23 @@ def try_load file
   rescue LoadError; end
 end
 
-$uid_v8 = 0x08430009
+$pys60_version = ($sake_op[:pys60] ? $sake_op[:pys60].to_i : 1)
+
+case $pys60_version
+when 1
+  $uid_v8 = 0x08430009
+when 2
+  $uid_v8 = 0x0843000b
+else
+  raise "unsupported PyS60 version"
+end
+
 $basename = "pyswinst"
+$version = [1, 3]
 
 $proj = Sake::Project.new(:basename => $basename,
-                          :name => "SW Inst API for PyS60",
-                          :version => [1, 3],
+                          :name => "SW Inst API for PyS60v#{$pys60_version}",
+                          :version => $version,
                           # This is a test UID.
                           :uid => Sake::Uid.v8($uid_v8),
                           :vendor => "HIIT")
@@ -50,7 +58,7 @@ else
 end
 
 $kits.delete_if do |kit|
-  !kit.supports_python?
+  !kit.supports_python_v?($pys60_version)
 end
 
 if $sake_op[:comps]
@@ -63,10 +71,23 @@ end
 $builds = $kits.map do |kit|
   build = Sake::ProjBuild.new(:project => $proj,
                               :devkit => kit)
-  build.abld_platform = (build.v9? ? "gcce" : "armi")
+  if build.v9_up?
+    build.handle = (build.handle + ("_py%d" % $pys60_version))
+  end
+  build.abld_platform = (build.v9_up? ? "gcce" : "armi")
   build.abld_build = ($sake_op[:udeb] ? "udeb" : "urel")
   if $sake_op[:udeb]
     build.handle = (build.handle + "_udeb")
+  end
+  if $sake_op[:span_5th]
+    build.handle = (build.handle + "_5th")
+    $span_s60_5th = true
+  end
+  if build.v9_up?
+    build.gcc_version = ($sake_op[:gcce] ? $sake_op[:gcce].to_i : 3)
+    if build.gcc_version > 3
+      build.handle = (build.handle + ("_gcce%d" % build.gcc_version))
+    end
   end
   build
 end
@@ -122,14 +143,77 @@ class HexNum
   end
 end
 
-$exeb = Hash.new
-for build in $builds
-  map = build.trait_map
+class Sake::ProjBuild
+  def needs_pyd_wrapper?
+    # Some problems with imp.load_dynamic, better avoid the issue for
+    # now, especially as we are not using the wrapper to include pure
+    # Python code yet.
+    false # v9?
+  end
+end
+
+class Sake::CompBuild
+  def binary_prefix
+    return "" if v8_down?
+    pfx =
+      case $pys60_version
+      when 1 then ""
+      when 2 then "kf_"
+      else raise end
+    pfx += "_" if needs_pyd_wrapper?
+    pfx
+  end
+
+  def binary_suffix
+    return "" unless needs_pyd_wrapper?
+    "_" + uid3.chex_string
+  end
+
+  def binary_file
+    generated_file("%s%s%s.%s" % [binary_prefix,
+                                  bin_basename,
+                                  binary_suffix,
+                                  target_ext])
+  end
+
+  def pyd_wrapper_basename
+    bin_basename
+  end
+
+  def pyd_wrapper_file
+    generated_file(pyd_wrapper_basename + ".py")
+  end
+
+  def pyd_wrapper_path_in_pkg
+    # To look for suitable paths, use
+    #
+    #   import sys
+    #   sys.path
+    #
+    # Yes, it seems putting wrappers on E: is not an option.
+    case $pys60_version
+    when 1 then "c:\\resource\\"
+    when 2 then "c:\\resource\\python25\\"
+    else raise end
+  end
+end
+
+$cbuild_by_pbuild = Hash.new
+for pbuild in $builds
+  map = pbuild.trait_map
 
   # To define __UID__ for header files.
-  if build.uid
-    map[:uid] = HexNum.new(build.uid.number)
+  if pbuild.uid
+    map[:uid] = HexNum.new(pbuild.uid.number)
   end
+
+  map[:pys60_version] = $pys60_version
+
+  map[($basename + "_version").to_sym] = ($version[0] * 100 + $version[1])
+
+  modname = (pbuild.needs_pyd_wrapper? ? ("_" + $basename) : $basename)
+  map[:module_name] = modname
+  map[:init_func_name] = ("init" + modname).to_sym
 
   # NDEBUG controls whether asserts are to be compiled in (NDEBUG is
   # defined in UDEB builds). Normally an assert results in something
@@ -144,17 +228,17 @@ for build in $builds
   end
 
   # Each build variant shall have all of the components.
-  build.comp_builds = $comp_list.map do |comp|
-    b = Sake::CompBuild.new(:proj_build => build,
+  pbuild.comp_builds = $comp_list.map do |comp|
+    b = Sake::CompBuild.new(:proj_build => pbuild,
                             :component => comp)
-    $exeb[build] = b
+    $cbuild_by_pbuild[pbuild] = b
     b
   end
 end
 
 task :default => [:bin, :sis]
 
-require 'sake3/tasks'
+require 'sake4/tasks'
 
 Sake::Tasks::def_list_devices_tasks(:builds => $builds)
 

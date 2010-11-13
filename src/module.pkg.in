@@ -27,7 +27,7 @@
 
 #{"<%= build.name %>"}, (<%= build.uid.chex_string %>), <%= build.major_version %>, <%= build.minor_version %>, 0
 
-<% if build.v9? %>
+<% if build.v9_up? %>
 ;Localised Vendor name
 %{"<%= build.vendor %>"}
 
@@ -44,12 +44,19 @@
 [0x2000060B], 0, 0, 0, {"Nokia N95"}
 [0x2000DA56], 0, 0, 0, {"Nokia 5800 XM"}
 
-<% dllname = $exeb[build].bin_basename %>
+<% cbuild = $cbuild_by_pbuild[build]
+   dllname = cbuild.binary_file.basename.to_s 
+   if build.needs_pyd_wrapper?
+     wrapname = cbuild.pyd_wrapper_file.basename.to_s 
+     wrappath = cbuild.pyd_wrapper_path_in_pkg
+   end
+%>
 
-<% if build.v9? %>
-"<%= dllname %>.pyd" - "!:\sys\bin\<%= dllname %>.pyd"
-<% else %>
-"<%= dllname %>.pyd" - "!:\system\libs\<%= dllname %>.pyd"
+<% if build.v9_up? %>
+"<%= dllname %>" - "!:\sys\bin\<%= dllname %>"
+<% if build.needs_pyd_wrapper? %>
+"<%= wrapname %>" - "<%= wrappath %><%= wrapname %>"
 <% end %>
-
-;;"<%= dllname %>.py" - "!:\python\lib\<%= dllname %>.py"
+<% else %>
+"<%= dllname %>" - "!:\system\libs\<%= dllname %>"
+<% end %>
