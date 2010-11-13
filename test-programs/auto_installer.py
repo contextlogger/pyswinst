@@ -1,5 +1,5 @@
 # 
-# Copyright 2007-2008 Helsinki Institute for Information Technology
+# Copyright 2007-2010 Helsinki Institute for Information Technology
 # (HIIT) and the authors. All rights reserved.
 # 
 # Authors: Tero Hasu <tero.hasu@hut.fi>
@@ -32,6 +32,14 @@ import os
 import fnmatch # not built-in
 from pyswinst import SwInst
 from miso import FsNotifyChange
+
+untrusted_allfiles = False
+if os.path.exists("z:\system\install\Series60v5.2.sis"):
+    untrusted_allfiles = True
+opt_capabilities = opt_untrusted = True
+if untrusted_allfiles:
+    # xxx Can we check the capabilities we are running with?
+    opt_capabilities = opt_untrusted = False
 
 def to_unicode(s):
     if type(s) is unicode:
@@ -113,7 +121,7 @@ class AutoInstaller:
             self.send_ev("inst_ok", "install OK: %s" % fn)
             self.delete_file(fn)
         else:
-            self.send_ev("inst_fail", "failed to install %s" % fn)
+            self.send_ev("inst_fail", "failed to install %s (error %d)" % (fn, error))
         self.install_next()
 
     def delete_file(self, fn):
@@ -126,7 +134,7 @@ class AutoInstaller:
     def install_file(self, fn):
         self.send_ev("inst_start", u"installing %s" % fn)
         try:
-            self.inst.install(fn, self._sw_installed)
+            self.inst.install(fn, self._sw_installed, capabilities = opt_capabilities, untrusted = opt_untrusted)
             self.cur_fn = fn
         except:
             self.send_ev("inst_fail", "failed to install %s" % fn)
