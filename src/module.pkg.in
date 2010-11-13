@@ -39,6 +39,7 @@
 <%= build.target.pkg_dependency_string %>
 
 ;; Tested to work on these devices.
+;; http://wiki.forum.nokia.com/index.php/S60_Platform_and_device_identification_codes
 [0x20001858], 0, 0, 0, {"Nokia E61"}
 [0x2000249b], 0, 0, 0, {"Nokia E71"}
 [0x2000060B], 0, 0, 0, {"Nokia N95"}
