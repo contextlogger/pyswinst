@@ -43,6 +43,7 @@
 [0x2000249b], 0, 0, 0, {"Nokia E71"}
 [0x2000060B], 0, 0, 0, {"Nokia N95"}
 [0x2000DA56], 0, 0, 0, {"Nokia 5800 XM"}
+[0x20029A73], 0, 0, 0, {"Nokia N8 (RM-596)"}
 
 <% cbuild = $cbuild_by_pbuild[build]
    dllname = cbuild.binary_file.basename.to_s 
