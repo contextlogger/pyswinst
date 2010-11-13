@@ -181,7 +181,7 @@ struct _or__pyswinst__SwInst
 
 static PyObject *_ctor__pyswinst__SwInst(PyObject *aPyMod, PyObject *aPyArgs);
 
-static PyObject *_fn__pyswinst__SwInst__install(_or__pyswinst__SwInst *aPyObj, PyObject *aPyArgs);
+static PyObject *_fn__pyswinst__SwInst__install(_or__pyswinst__SwInst *aPyObj, PyObject *aPyArgs, PyObject *aPyKwds);
 
 static PyObject *_fn__pyswinst__SwInst__cancel(_or__pyswinst__SwInst *aPyObj, PyObject *aPyArgs);
 
@@ -195,7 +195,7 @@ static PyTypeObject const tmpl_SwInst = {PyObject_HEAD_INIT(NULL) 0, __MODULE_NA
 
 static TInt def_SwInst();
 
-static PyMethodDef const _mt__pyswinst__SwInst[] = {{"install", reinterpret_cast<PyCFunction>(_fn__pyswinst__SwInst__install), METH_VARARGS, NULL}, {"cancel", reinterpret_cast<PyCFunction>(_fn__pyswinst__SwInst__cancel), METH_NOARGS, NULL}, {"close", reinterpret_cast<PyCFunction>(_fn__pyswinst__SwInst__close), METH_NOARGS, NULL}, {NULL}};
+static PyMethodDef const _mt__pyswinst__SwInst[] = {{"install", reinterpret_cast<PyCFunction>(_fn__pyswinst__SwInst__install), METH_VARARGS|METH_KEYWORDS, NULL}, {"cancel", reinterpret_cast<PyCFunction>(_fn__pyswinst__SwInst__cancel), METH_NOARGS, NULL}, {"close", reinterpret_cast<PyCFunction>(_fn__pyswinst__SwInst__close), METH_NOARGS, NULL}, {NULL}};
 
 // -------------------------------------------------------
 // Python instance implementation...
@@ -217,12 +217,20 @@ static PyObject *_ctor__pyswinst__SwInst(PyObject *aPyMod, PyObject *aPyArgs)
   return reinterpret_cast<PyObject *>(pyObj);
 }
 
-static PyObject *_fn__pyswinst__SwInst__install(_or__pyswinst__SwInst *aPyObj, PyObject *aPyArgs)
+#define allowed_cast(x) ((x) ? SwiUI::EPolicyAllowed : SwiUI::EPolicyNotAllowed)
+
+static PyObject *_fn__pyswinst__SwInst__install(_or__pyswinst__SwInst *aPyObj, PyObject *aPyArgs, PyObject *aPyKwds)
 {
   TUint16 *mPtr;
   int mLen;
   PyObject *cb;
-  if ((!PyArg_ParseTuple(aPyArgs, "u#O", (&mPtr), (&mLen), (&cb)))) {
+  int capabilities = 1;
+  int untrusted = 1;
+  const char *const kwlist[] = {"file", "cb", "capabilities", "untrusted", NULL};
+  if ((!PyArg_ParseTupleAndKeywords(aPyArgs, aPyKwds,
+				    "u#O|ii", (char**)kwlist,
+				    (&mPtr), (&mLen), (&cb),
+				    &capabilities, &untrusted))) {
     return NULL;
   }
   if ((!PyCallable_Check(cb))) {
@@ -235,9 +243,10 @@ static PyObject *_fn__pyswinst__SwInst__install(_or__pyswinst__SwInst *aPyObj, P
   opts.iUpgrade = SwiUI::EPolicyAllowed;
   opts.iOCSP = SwiUI::EPolicyNotAllowed;
   opts.iDrive = 'E';
-  opts.iUntrusted = SwiUI::EPolicyAllowed; 
-  // "Automatically grant user capabilities." Do not know what this means, but it seems to be required for installing self-signed SIS files.
-  opts.iCapabilities = SwiUI::EPolicyAllowed; // SwiUI::EPolicyNotAllowed; 
+  // Whether to allow the installation of untrusted software. (On Symbian^3 this option requires AllFiles.)
+  opts.iUntrusted = allowed_cast(untrusted);
+  // "Automatically grant user capabilities." Seems to be required for installing self-signed SIS files. (On Symbian^3 this option requires AllFiles.)
+  opts.iCapabilities = allowed_cast(capabilities);
   opts.iKillApp = SwiUI::EPolicyAllowed; 
   //opts.iUpgradeData = SwiUI::EPolicyNotAllowed; 
   opts.iOverwrite = SwiUI::EPolicyAllowed; 
