@@ -98,7 +98,7 @@ try_load('local/signing.rb')
 $builds.delete_if do |build|
   # Only v9 builds supported, actually.
   # Maybe even not all of them, due to the SWInst API instability.
-  !build.v9? or (build.sign and !build.cert_file)
+  !build.v9_up? or (build.sign and !build.cert_file)
 end
 
 if $sake_op[:builds]
@@ -148,7 +148,7 @@ class Sake::ProjBuild
     # Some problems with imp.load_dynamic, better avoid the issue for
     # now, especially as we are not using the wrapper to include pure
     # Python code yet.
-    false # v9?
+    false # v9_up?
   end
 end
 

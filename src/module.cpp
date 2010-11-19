@@ -34,6 +34,8 @@
  */
 
 #include <e32std.h>
+#include <e32capability.h>
+
 #include <swinstapi.h>
 
 #include <Python.h>
@@ -302,7 +304,25 @@ static TInt def_SwInst()
 // -------------------------------------------------------
 // Python module...
 
-static PyMethodDef const _ft__pyswinst[] = {{"SwInst", reinterpret_cast<PyCFunction>(_ctor__pyswinst__SwInst), METH_NOARGS, NULL}, {NULL}};
+static PyObject* _fn__pyswinst__have_AllFiles(PyObject*, PyObject*)
+{
+  RProcess p;
+  TBool result = p.HasCapability(ECapabilityAllFiles);
+  return Py_BuildValue("i", result ? 1 : 0);
+}
+
+static PyObject* _fn__pyswinst__have_TrustedUI(PyObject*, PyObject*)
+{
+  RProcess p;
+  TBool result = p.HasCapability(ECapabilityTrustedUI);
+  return Py_BuildValue("i", result ? 1 : 0);
+}
+
+static PyMethodDef const _ft__pyswinst[] = {
+  {"SwInst", reinterpret_cast<PyCFunction>(_ctor__pyswinst__SwInst), METH_NOARGS, NULL}, 
+  {"have_AllFiles", reinterpret_cast<PyCFunction>(_fn__pyswinst__have_AllFiles), METH_NOARGS, NULL}, 
+  {"have_TrustedUI", reinterpret_cast<PyCFunction>(_fn__pyswinst__have_TrustedUI), METH_NOARGS, NULL}, 
+  {NULL}};
 
 EXPORT_PYD_ENTRY(__INIT_FUNC_NAME__)
 {

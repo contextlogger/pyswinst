@@ -37,7 +37,7 @@ A [darcs http://darcs.net/] repository of the [source code ..] (with change hist
 
 h1. Dependencies
 
-The software runs on some S60 3rd Edition devices, but we do not know on which ones exactly. The software accesses the [SW Installer Launcher http://wiki.forum.nokia.com/index.php/SW_Installer_Launcher_API] ABI, and there are apparently no guarantees as to the binary compatibility for that ABI, neither "neither between platform versions or within a platform version".
+The software runs on some S60 3rd and 5th Edition and Symbian^3 devices, but we do not know on which ones exactly. The software accesses the [SW Installer Launcher http://wiki.forum.nokia.com/index.php/SW_Installer_Launcher_API] ABI, and there are apparently no guarantees as to the binary compatibility for that ABI, neither "neither between platform versions or within a platform version".
 
 h1. Contributing
 

@@ -30,15 +30,20 @@ import audio
 import e32
 import os
 import fnmatch # not built-in
-from pyswinst import SwInst
+from pyswinst import SwInst, have_TrustedUI, have_AllFiles
 from miso import FsNotifyChange
 
+# Only PyS60 v2 has e32.has_capabilities, so we are using dedicated
+# cap checking functions from the pyswinst module.
+if not have_TrustedUI():
+    raise Exception, "this app requires TrustedUI capability"
+
 untrusted_allfiles = False
-if os.path.exists("z:\system\install\Series60v5.2.sis"):
+if os.path.exists("z:\\system\\install\\Series60v5.2.sis"):
     untrusted_allfiles = True
 opt_capabilities = opt_untrusted = True
-if untrusted_allfiles:
-    # xxx Can we check the capabilities we are running with?
+if untrusted_allfiles and not have_AllFiles():
+    print "cannot install self-signed SIS files"
     opt_capabilities = opt_untrusted = False
 
 def to_unicode(s):
