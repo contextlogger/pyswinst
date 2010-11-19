@@ -21,7 +21,7 @@ else
 end
 
 $basename = "pyswinst"
-$version = [1, 4]
+$version = [1, 5]
 
 $proj = Sake::Project.new(:basename => $basename,
                           :name => "SW Inst API for PyS60v#{$pys60_version}",
