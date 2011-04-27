@@ -2,16 +2,17 @@ pyswinst for Python for S60
 
 %%mtime(%c)
 
-%!includeconf: config.t2t
 %! Options : --toc --enum-title
 
 h1. Introduction
 
-The ``pyswinst`` [Python for S60 http://www.forum.nokia.com/python] extension supports programmatic, non-interactive software installation. Both SIS files and JAR files should be installable, but we have only tried SIS file installation.
+The ``pyswinst`` [Python for S60 https://garage.maemo.org/projects/pys60] extension supports programmatic, non-interactive software installation. Both SIS files and JAR files should be installable, but we have only tried SIS file installation.
 
 The present version uses a mostly fixed set of installation options, of which particularly noteworthy are that installation is always to the ``E:`` drive (tough luck if the drive does not exist), and that upgrades (i.e., replacing software that is already installed) are allowed.
 
 There are two exceptions in that the ``iUntrusted`` and ``iCapabilities`` options may be specified as keyword arguments (named ``untrusted`` and ``capabilities``, respectively) to the ``install`` method. As far as development tools go you probably want to have both of these options be ``True`` (which is the default), but on Symbian^3 this [requires http://developer.symbian.org/forum/showthread.php?t=7428] the ``AllFiles`` capability, and hence you may have to specify both as ``False`` instead on Symbian^3, and stick to installing trusted (not self-signed) software.
+
+Both PyS60 v1.4.x and v2 series are supported by this extension.
 
 h1. Status
 
@@ -19,32 +20,32 @@ Stable.
 
 h1. Examples
 
-The [programs used to test ``pyswinst`` ../test-programs] also serve as example programs. There is no API documentation available for ``pyswinst``. The API is rather simple, though, and the examples should be sufficient to cover it.
+The [programs used to test ``pyswinst`` https://github.com/contextlogger/pyswinst/tree/master/test-programs] also serve as example programs. There is no API documentation available for ``pyswinst``. The API is rather simple, though, and the examples should be sufficient to cover it.
 
-Note that ``auto_installer.py`` depends on the ``fnmatch.py`` and ``miso`` libraries, of which at least ``miso`` is not included in Nokia's Python for S60 distributions. ``fnmatch.py`` can be acquired from other, compatible Python distributions, and Miso downloads are available from the [Miso homepage http://www.hiit.fi/files/fi/da/miso/utils/web/].
+Note that ``auto_installer.py`` depends on the ``fnmatch.py`` and ``miso`` libraries, of which neither is included in Nokia's Python for S60 distributions. ``fnmatch.py`` can be acquired from other, compatible Python distributions, and we have also [packaged it http://new.contextlogger.org/fnmatch-python/] as a SIS file. Miso downloads are available from the [Miso homepage http://www.hiit.fi/files/fi/da/miso/utils/web/].
 
 h1. License
 
-For the license under which the software is released, see the [license.txt ../doc/license.txt] file.
+For the license under which the software is released, see the [license.txt https://github.com/contextlogger/pyswinst/blob/master/doc/license.txt] file.
 
 h1. Download
 
-A [collection of release builds ../download/] is available. The ``py1`` builds are for PyS60 1.4.5, and the ``py2`` builds are for the 1.9.x/2.0.0 series. The ``self`` variant is self-signed, with maximum self-signable capabilities. The ``dev`` variant is signable with Symbian's Open Signed Online or with a developer certificate, and has maximum capabilities allowed by Open Signed Online. Note that in this case the self-signed version is rather pointless, as the TrustedUI capability is required for "silent" software installation.
+A [collection of release builds download/] is available. The ``py1`` builds are for PyS60 1.4.5, and the ``py2`` builds are for the 1.9.x/2.0.0 series. The ``self`` variant is self-signed, with maximum self-signable capabilities. The ``dev`` variant is signable with Symbian's Open Signed Online or with a developer certificate, and has maximum capabilities allowed by Open Signed Online. Note that in this case the self-signed version is rather pointless, as the TrustedUI capability is required for "silent" software installation.
 
-You may or may not find the [changelog.txt changelog.txt] file useful in trying to determine what has changed between releases.
+You may or may not find the [changelog https://github.com/contextlogger/pyswinst/commits/master/] useful in trying to determine what has changed between releases.
 
-A [darcs http://darcs.net/] repository of the [source code ..] (with change history) is also available, and can be retrieved with the ``get`` command of ``darcs``.
+A [Git http://git-scm.com/] repository of the source code (with change history) is also available, hosted on GitHub at http://github.com/contextlogger/pynewfile.
 
 h1. Dependencies
 
 The software runs on some S60 3rd and 5th Edition and Symbian^3 devices, but we do not know on which ones exactly. The software accesses the [SW Installer Launcher http://wiki.forum.nokia.com/index.php/SW_Installer_Launcher_API] ABI, and there are apparently no guarantees as to the binary compatibility for that ABI, neither "neither between platform versions or within a platform version".
 
-h1. Contributing
+h1. Acknowledgements
 
-Contributions are welcome. Send patches to the below email address. The ``send`` command of ``darcs`` may be used.
+The library was created at [HIIT http://www.hiit.fi/].
 
 ------------------------------------------------
-_signature_
+_signature_th_
 
 % Local Variables:
 % mode: longlines
