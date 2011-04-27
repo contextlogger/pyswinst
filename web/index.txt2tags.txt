@@ -34,7 +34,7 @@ A [collection of release builds download/] is available. The ``py1`` builds are 
 
 You may or may not find the [changelog https://github.com/contextlogger/pyswinst/commits/master/] useful in trying to determine what has changed between releases.
 
-A [Git http://git-scm.com/] repository of the source code (with change history) is also available, hosted on GitHub at http://github.com/contextlogger/pynewfile.
+A [Git http://git-scm.com/] repository of the source code (with change history) is also available, hosted on GitHub at http://github.com/contextlogger/pyswinst.
 
 h1. Dependencies
 
