@@ -22,7 +22,7 @@ h1. Examples
 
 The [programs used to test ``pyswinst`` https://github.com/contextlogger/pyswinst/tree/master/test-programs] also serve as example programs. There is no API documentation available for ``pyswinst``. The API is rather simple, though, and the examples should be sufficient to cover it.
 
-Note that ``auto_installer.py`` depends on the ``fnmatch.py`` and ``miso`` libraries, of which neither is included in Nokia's Python for S60 distributions. ``fnmatch.py`` can be acquired from other, compatible Python distributions, and we have also [packaged it http://new.contextlogger.org/fnmatch-python/] as a SIS file. Miso downloads are available from the [Miso homepage http://www.hiit.fi/files/fi/da/miso/utils/web/].
+Note that ``auto_installer.py`` depends on the ``fnmatch.py`` and ``miso`` libraries, of which neither is included in Nokia's Python for S60 distributions. ``fnmatch.py`` can be acquired from other, compatible Python distributions, and we have also [packaged it http://contextlogger.github.io/fnmatch-python/] as a SIS file. Miso downloads are available from the [Miso homepage http://contextlogger.github.io/miso/].
 
 h1. License
 
@@ -46,7 +46,3 @@ The library was created at [HIIT http://www.hiit.fi/].
 
 ------------------------------------------------
 _signature_th_
-
-% Local Variables:
-% mode: longlines
-% End:
